@@ -24,19 +24,15 @@ typedef struct two_chained_list
 } two_chained_list;
 
 void insert(tree* t,int value);
-int find(tree* t,int value,node* n);
 void init(tree* t);
 int remove_(tree* t,int value);
 int removeMin(node* n);
-int rotateLeft(node* n);
-int root_rotateLeft(tree* t);
-int rotateRight(node* n);
-int root_rotateRight(tree* t);
 void printTree(tree* t);
 void clear_branch(node* n);
 void clear(tree* t);
-void print(node* n);
-
+void print_v_shirinu(node* n);
+void straight_print (node* n);
+void back_print(node* n);
 void init_list(two_chained_list* l);
 void clear_list(two_chained_list* l);
 int isEmpty_list( two_chained_list* l);
@@ -44,123 +40,18 @@ int push_back_list( two_chained_list* l, node* val);
 void print_list( two_chained_list* l);
 int printable( two_chained_list* l);
 
-void print_founded(node* n){
-    if(n->parent!=NULL)
-        printf("%d ", n->parent->value);
-    else
-        printf("_ ");
-    if(n->left!=NULL)
-        printf("%d ", n->left->value);
-    else
-        printf("_ ");
-    if(n->right!=NULL)
-        printf("%d\n", n->right->value);
-    else
-        printf("_\n");
-}
-
 int main(){
     tree* root = malloc(sizeof(tree));
     init(root);
     int t;
-    for(int i=0;i<4;i++){
-        scanf("%d",&t);
-        insert(root,t);
-    }
-    printTree(root);
-    for(int i=0;i<3;i++){
+    for(int i=0;i<7;i++){
         scanf("%d",&t);
         insert(root,t);
     }
     printTree(root);
 
-    int m;
-    scanf("%d",&m);
-    node* n = malloc(sizeof(node));
-    if(find(root,m,n)==0)
-        print_founded(n); 
-    else
-        printf("-\n");
-
-    scanf("%d",&m);
-    if(find(root,m,n)==0)
-        print_founded(n); 
-    else
-        printf("-\n");
-
-    scanf("%d",&m);
-    remove_(root,m);
-    printTree(root);
-    while(root_rotateLeft(root)!=1);
-    printTree(root);
-    while(root_rotateRight(root)!=1);
-    printTree(root);
-    printf("%d\n", root->size);
-    clear(root);
-    printTree(root);
     return 0;
 }
-
-
-int rotateRight( node* n) {
-    if (n->left == NULL)
-        return 1;
-    node* tmp = n->left;
-    if (n->parent != NULL) {
-        if (n->parent->left == n)
-            n->parent->left = tmp;
-        else
-            n->parent->right = tmp;
-    }
-    tmp->parent = n->parent;
-    n->parent = tmp;
-    node* t1 = tmp->right;
-    tmp->right = n;
-    n->left = t1;
-    n = tmp;
-    return 0;
-}
-
-int rotateLeft( node* n) {
-        if (n->right == NULL)
-                return 1;
-        node* tmp = n->right;
-        if (n->parent != NULL){
-                if (n->parent->right == n) 
-                        n->parent->right = tmp;
-                else
-                        n->parent->left = tmp;
-        }
-        tmp->parent = n->parent;
-        n->parent = tmp;
-        node* t1 = tmp->left;
-        tmp->left = n;
-        n->right = t1;
-        n = tmp;
-        return 0;
-}
-
-
-int root_rotateLeft(tree* t){
-        node* n = t->root;
-        if(rotateLeft(n)==0){
-                t->root=n->parent;
-                return 0;
-        }
-        else
-                return 1;
-}
-
-int root_rotateRight(tree* t){
-        node* n = t->root;
-        if(rotateRight(n)==0){
-                t->root=n->parent;
-                return 0;
-        }
-        else
-                return 1;
-}
-
 
 void insert(tree* t,int value){
         if(t->root==NULL){
@@ -198,28 +89,6 @@ void insert(tree* t,int value){
                         }else
                                 tmp=tmp->left;
                 }
-        }
-}
-
-int find(tree* t,int value,node* n){
-        if(t->root==NULL){
-                return 1;
-        }
-        node* tmp=t->root;
-        while(1){
-                if(tmp==NULL)
-                        return 1;
-                if(tmp->value==value){
-                        n->value=tmp->value;
-                        n->left=tmp->left;
-                        n->right=tmp->right;
-                        n->parent=tmp->parent;
-                        return 0;
-                }
-                if(value > tmp->value)
-                        tmp=tmp->right;
-                else if(value < tmp->value)
-                        tmp=tmp->left;
         }
 }
 
@@ -288,7 +157,7 @@ int removeMin(node* n){
         }       
 }
 
-void print(node* n)
+void print_v_shirinu(node* n)
 {
     if (n==NULL)
     {
@@ -345,10 +214,48 @@ void print(node* n)
     }
 }
 
- void printTree(tree *t)
- {
-     print(t->root);
- }
+void straight_print(node* n){
+
+    node** nodes = malloc(sizeof(node)*128);
+    int last_pos=127;
+    printf("%d ", n->value);
+    nodes[last_pos]=n->right;
+    last_pos--;
+    nodes[last_pos]=n->left;
+    last_pos--;
+    while(last_pos!=127){
+        last_pos++;
+        node* tmp=nodes[last_pos];
+        printf("%d ", tmp->value);
+        if(tmp->right!=NULL){
+            nodes[last_pos]=tmp->right;
+            last_pos--;
+        }
+        if(tmp->left!=NULL){
+            nodes[last_pos]=tmp->left;
+            last_pos--;
+        }
+    }
+}
+
+void back_print(node* n){
+    if (n!=NULL) {
+        int appended=0;
+        if(n->left!=NULL && n->right!=NULL){}
+        back_print(n->left);
+        back_print(n->right);
+        printf("%d ", n->value);
+    }
+}
+
+
+void printTree(tree *t)
+{
+    // print_v_shirinu(t->root);
+    // straight_print(t->root);
+    back_print(t->root);
+    printf("\n");
+}
 
 void clear(tree *t)
 {
@@ -401,6 +308,7 @@ void clear(tree *t)
         }
     }
     init(t);
+
 }
 
 
@@ -461,9 +369,9 @@ void print_list( two_chained_list* l)
             tmp = tmp->next;
         }
         if (tmp->address == NULL) 
-            printf("_\n");
+            printf("_ ");
         else
-            printf("%d\n", l->tail->address->value);
+            printf("%d ", l->tail->address->value);
         }
 }
 
